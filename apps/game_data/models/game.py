@@ -9,7 +9,7 @@ class SBBGame(models.Model):
     NOT tied to a specific player's POV!
     """
 
-    match_uuid = models.UUIDField(unique=True)
+    uuid = models.UUIDField(unique=True)
 
     # Ask isik - can we get client patch stamp?
 
