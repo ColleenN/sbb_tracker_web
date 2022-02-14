@@ -7,6 +7,8 @@ from apps.game_data.serializers.utils import (
 )
 
 
+from rest_framework.fields import empty
+
 class SampleObject:
 
     def __init__(self, field_val_1, field_val_2):
@@ -54,7 +56,7 @@ class TestDashConvertMixin(TestCase):
 
 class SampleIDKeyChildSerializer(serializers.Serializer):
 
-    sample_field = serializers.CharField()
+    sample_field_2 = serializers.CharField()
 
     class Meta:
         list_serializer_class = IDKeyListSerializer
@@ -66,10 +68,22 @@ class TestIDKeyChildSerializer(TestCase):
     """
 
     def setUp(self) -> None:
-
+        """Set up some JSON of the form we're concerned with."""
         self.json = {
-            "7": {'sample-field-2': 'value-a'},
-            "8": {'sample-field-2': 'value-b'}
+            "7": {'sample_field_2': 'value-a'},
+            "8": {'sample_field_2': 'value-b'}
         }
-        self.object_1 = SampleObject("7", "value-a")
-        self.object_2 = SampleObject("8", "value-b")
+
+    def test_keylist(self):
+        """Check that serializer can ingest + transform JSON."""
+        serializer = SampleIDKeyChildSerializer(
+            data=self.json, many=True)
+        self.assertTrue(serializer.is_valid())
+        self.assertEqual(
+            serializer.validated_data,
+            [
+                {'sample_field_2': 'value-a'},
+                {'sample_field_2': 'value-b'}
+            ]
+        )
+        self.assertEqual(serializer.child.context, {'key': '8'})

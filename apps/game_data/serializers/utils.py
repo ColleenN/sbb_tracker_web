@@ -93,7 +93,7 @@ class IDKeyListSerializer(serializers.ListSerializer):
         errors = []
 
         for key in data:
-            self.child.context['key'] = data[key]
+            self.child.context['key'] = key
             try:
                 validated = self.child.run_validation(data[key])
             except ValidationError as exc:
