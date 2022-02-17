@@ -60,7 +60,6 @@ class IDKeyListSerializer(serializers.ListSerializer):
         """
         if html.is_html_input(data):
             data = html.parse_html_list(data, default={})
-
         if not isinstance(data, Mapping):
             message = self.error_messages['invalid'].format(
                 datatype=type(data).__name__

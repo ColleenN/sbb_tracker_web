@@ -16,8 +16,32 @@ class SBBHero(models.Model):
     A Hero within SBB.
     """
 
+    name = models.CharField()
+    slug = models.SlugField()
+    template_id = models.IntegerField()
+
 
 class SBBCharacter(models.Model):
     """
     A character within SBB.
     """
+
+    name = models.CharField()
+    slug = models.SlugField()
+    template_id = models.IntegerField()
+
+
+class SBBTreasure(models.Model):
+    """A Treasure in SBB."""
+
+    name = models.CharField()
+    slug = models.SlugField()
+    template_id = models.IntegerField()
+
+
+class SBBSpell(models.Model):
+    """A spell in SBB."""
+
+    name = models.CharField()
+    slug = models.SlugField()
+    template_id = models.IntegerField()
