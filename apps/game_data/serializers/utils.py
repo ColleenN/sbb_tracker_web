@@ -105,3 +105,14 @@ class IDKeyListSerializer(serializers.ListSerializer):
             raise ValidationError(errors)
 
         return ret
+
+
+class ContextDefaulter:
+    """Pulls field default from the designated context key."""
+    requires_context = True
+
+    def __init__(self, source):
+        self.source = source
+
+    def __call__(self, serializer_field):
+        return serializer_field.context.get('source')
