@@ -11,37 +11,30 @@ class SBBPlayer(models.Model):
     account_id = models.CharField(unique=True, max_length=32)
 
 
-class SBBHero(models.Model):
+class SBBGamePiece(models.Model):
     """
-    A Hero within SBB.
+    An SBB Game Piece described by a single template id.
     """
-
-    name = models.CharField()
+    name = models.CharField(max_length=32)
     slug = models.SlugField()
     template_id = models.IntegerField()
 
-
-class SBBCharacter(models.Model):
-    """
-    A character within SBB.
-    """
-
-    name = models.CharField()
-    slug = models.SlugField()
-    template_id = models.IntegerField()
+    class Meta:
+        abstract = True
 
 
-class SBBTreasure(models.Model):
+class SBBHero(SBBGamePiece):
+    """A Hero within SBB."""
+
+
+class SBBCharacter(SBBGamePiece):
+    """A character within SBB."""
+
+
+class SBBTreasure(SBBGamePiece):
     """A Treasure in SBB."""
 
-    name = models.CharField()
-    slug = models.SlugField()
-    template_id = models.IntegerField()
 
-
-class SBBSpell(models.Model):
+class SBBSpell(SBBGamePiece):
     """A spell in SBB."""
 
-    name = models.CharField()
-    slug = models.SlugField()
-    template_id = models.IntegerField()
