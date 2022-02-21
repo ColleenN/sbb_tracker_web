@@ -11,7 +11,7 @@ from apps.game_data.serializers.game import (
 )
 
 
-class TestSample(TestCase):
+class TestSerializers(TestCase):
 
     def setUp(self) -> None:
         self.samples_dir = 'apps/game_data/tests/json_samples'
@@ -27,7 +27,6 @@ class TestSample(TestCase):
             str(obj.uuid),
             'b822d294-38ce-4696-ab38-d286f2e91b1e'
         )
-        self.fail()
 
     def test_player_serializer(self):
 
@@ -45,5 +44,3 @@ class TestSample(TestCase):
 
         participant = game_players.first()
         self.assertEqual(participant.player.account_id, "94EFFF42C8A8A56E")
-
-        self.fail()
