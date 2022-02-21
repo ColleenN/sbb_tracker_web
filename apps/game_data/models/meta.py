@@ -15,8 +15,8 @@ class SBBGamePiece(models.Model):
     """
     An SBB Game Piece described by a single template id.
     """
-    name = models.CharField(max_length=32)
-    slug = models.SlugField()
+    name = models.CharField(max_length=64)
+    slug = models.CharField(max_length=128)
     template_id = models.IntegerField()
 
     class Meta:
