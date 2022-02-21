@@ -1,12 +1,14 @@
 """
 Serializer-related utility code not linked to a specific serializer.
 """
+from collections import OrderedDict
 from collections.abc import Mapping
+import copy
 
 from rest_framework import serializers
 from rest_framework.exceptions import ValidationError
 from rest_framework.settings import api_settings
-from rest_framework.utils import html
+from rest_framework.utils import html, model_meta
 
 
 class JSONDashConvertMixin:
@@ -115,4 +117,4 @@ class ContextDefaulter:
         self.source = source
 
     def __call__(self, serializer_field):
-        return serializer_field.context.get('source')
+        return serializer_field.context.get(self.source)

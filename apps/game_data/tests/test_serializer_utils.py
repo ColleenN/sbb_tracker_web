@@ -7,8 +7,6 @@ from apps.game_data.serializers.utils import (
 )
 
 
-from rest_framework.fields import empty
-
 class SampleObject:
 
     def __init__(self, field_val_1, field_val_2):
