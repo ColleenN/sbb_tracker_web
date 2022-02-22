@@ -4,9 +4,14 @@ import os
 
 from django.test import TestCase
 
-from apps.game_data.models import game as game_models
+from apps.game_data.models import (
+    game as game_models,
+    meta as meta_models
+)
 from apps.game_data.serializers.game import (
-    GameTarSerializer,
+    GameTarSerializer
+)
+from apps.game_data.serializers.participant_data import (
     PlayerGameRecordSerializer
 )
 
@@ -44,3 +49,22 @@ class TestSerializers(TestCase):
 
         participant = game_players.first()
         self.assertEqual(participant.player.account_id, "94EFFF42C8A8A56E")
+
+        heroes = meta_models.SBBHero.objects.all()
+        self.assertEqual(heroes.count(), 1)
+        self.assertEqual(heroes.first().template_id, 80)
+
+        turns = game_models.SBBGameTurn.objects.all()
+        self.assertEqual(turns.count(), 12)
+
+        first_turn = turns.first()
+        self.assertEqual(first_turn.hero, heroes.first())
+        self.assertEqual(first_turn.level, 2)
+        self.assertEqual(first_turn.exp, 0)
+        self.assertEqual(first_turn.hp, 40)
+
+        last_turn = turns.last()
+        self.assertEqual(last_turn.hero, heroes.first())
+        self.assertEqual(last_turn.level, 6)
+        self.assertEqual(last_turn.exp, 0)
+        self.assertEqual(last_turn.hp, -2)

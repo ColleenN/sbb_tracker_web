@@ -1,3 +1,4 @@
+from django.core.validators import MinValueValidator
 from django.db import models
 
 from apps.game_data.models import meta as metadata
@@ -23,3 +24,24 @@ class SBBGameParticipant(models.Model):
     player = models.ForeignKey(metadata.SBBPlayer, on_delete=models.DO_NOTHING)
 
 
+class SBBGameTurn(models.Model):
+    """
+    Record of each player's turn.
+    """
+
+    turn_num = models.IntegerField(validators=(MinValueValidator(1),))
+    participant = models.ForeignKey(
+        SBBGameParticipant, on_delete=models.DO_NOTHING)
+    hero = models.ForeignKey(
+        metadata.SBBHero, null=True, on_delete=models.DO_NOTHING)
+    hp = models.IntegerField(null=True)
+    level = models.IntegerField(null=True)
+    exp = models.IntegerField(null=True)
+
+    class Meta:
+        constraints = [
+            models.CheckConstraint(
+                name='exp_floor', check=models.Q(exp__gte=0)),
+            models.CheckConstraint(
+                name='exp_cap', check=models.Q(exp__lt=3))
+        ]
