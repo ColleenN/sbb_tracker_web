@@ -114,8 +114,8 @@ class IDKeyListField(fields.ListField):
     """
 
     def __init__(self, **kwargs):
-        super().__init__(**kwargs)
         self.zero_biased = kwargs.pop('zero_biased', True)
+        super().__init__(**kwargs)
 
     def to_internal_value(self, data):
         """
@@ -131,12 +131,16 @@ class IDKeyListField(fields.ListField):
 
         key_list = sorted(map(lambda x: int(x), data.keys()))
         start = 0 if self.zero_biased else 1
-        if not key_list == list(range(start, len(key_list))):
+        if not key_list == list(range(start, len(key_list)+start)):
             raise ValueError('Data keys must form complete list of indices.')
 
         data_list = [None] * len(key_list)
         for key in data:
-            data_list[int(key)] = data[key]
+            if self.zero_biased:
+                index = int(key)
+            else:
+                index = int(key) - 1
+            data_list[index] = data[key]
 
         return self.run_child_validation(data_list)
 
