@@ -1,14 +1,13 @@
 """
 Serializer-related utility code not linked to a specific serializer.
 """
-from collections import OrderedDict
 from collections.abc import Mapping
-import copy
 
+from rest_framework import fields
 from rest_framework import serializers
 from rest_framework.exceptions import ValidationError
 from rest_framework.settings import api_settings
-from rest_framework.utils import html, model_meta
+from rest_framework.utils import html
 
 
 class JSONDashConvertMixin:
@@ -107,6 +106,39 @@ class IDKeyListSerializer(serializers.ListSerializer):
             raise ValidationError(errors)
 
         return ret
+
+
+class IDKeyListField(fields.ListField):
+    """
+    A list that's spec'd as a dictionary, with indexes as keys.
+    """
+
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
+        self.zero_biased = kwargs.pop('zero_biased', True)
+
+    def to_internal_value(self, data):
+        """
+        List of dicts of native values <- List of dicts of primitive datatypes.
+        """
+        if html.is_html_input(data):
+            data = html.parse_html_list(data, default=[])
+        if not isinstance(data, Mapping):
+            raise ValidationError(
+                f'Expected a Mapping but got type "{type(data)}".')
+        if not self.allow_empty and len(data) == 0:
+            self.fail('empty')
+
+        key_list = sorted(map(lambda x: int(x), data.keys()))
+        start = 0 if self.zero_biased else 1
+        if not key_list == list(range(start, len(key_list))):
+            raise ValueError('Data keys must form complete list of indices.')
+
+        data_list = [None] * len(key_list)
+        for key in data:
+            data_list[int(key)] = data[key]
+
+        return self.run_child_validation(data_list)
 
 
 class ContextDefaulter:

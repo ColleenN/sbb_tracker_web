@@ -2,6 +2,7 @@ from django.test import TestCase
 from rest_framework import serializers
 
 from apps.game_data.serializers.utils import (
+    IDKeyListField,
     IDKeyListSerializer,
     JSONDashConvertMixin
 )
@@ -85,3 +86,26 @@ class TestIDKeyChildSerializer(TestCase):
             ]
         )
         self.assertEqual(serializer.child.context, {'key': '8'})
+
+
+class SampleIDKeyListFieldSerializer(serializers.Serializer):
+
+    sample_field = IDKeyListField()
+
+
+class TestIDKeyListField(TestCase):
+
+    def test_keylist_field(self):
+
+        field_data = {
+            '0': 'A',
+            '1': 'B',
+            '2': 'C',
+        }
+        data = {'sample_field': field_data}
+        serializer = SampleIDKeyListFieldSerializer(data=data)
+        self.assertTrue(serializer.is_valid())
+        self.assertEqual(
+            serializer.data,
+            {'sample_field': ['A', 'B', 'C']}
+        )
