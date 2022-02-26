@@ -16,16 +16,28 @@ class GameTarSerializer(JSONDashConvertMixin, serializers.ModelSerializer):
     """
 
     players = PlayerGameRecordSerializer(many=True)
+    placement = serializers.IntegerField(min_value=1, max_value=8)
+    player_id = serializers.CharField()
 
     def create(self, validated_data):
 
         participants = validated_data.pop('players')
+
+        placement = validated_data.pop('placement')
+        main_player_id = validated_data.pop('player_id')
+
         game_obj = super().create(validated_data)
         self.fields['players'].context['match'] = game_obj
-        self.fields['players'].create(participants)
+        participant_objs = self.fields['players'].create(participants)
+
+        for participant in participant_objs:
+            if participant.player.account_id == main_player_id:
+                participant.placement = placement
+                participant.save()
+
         return game_obj
 
     class Meta:
         model = game_models.SBBGame
-        fields = ('match_id', 'players')
+        fields = ('match_id', 'players', 'placement', 'player_id')
         extra_kwargs = {'match_id': {'source': 'uuid'}}

@@ -33,6 +33,14 @@ class TestSerializers(TestCase):
             'b822d294-38ce-4696-ab38-d286f2e91b1e'
         )
 
+        self.assertEqual(meta_models.SBBPlayer.objects.all().count(), 8)
+        main_player = meta_models.SBBPlayer.objects.get(
+            account_id="61F59D54CA111EB2")
+
+        participant_obj = main_player.sbbgameparticipant_set
+        self.assertEqual(participant_obj.all().count(), 1)
+        self.assertEqual(participant_obj.first().placement, 5)
+
     def test_player_serializer(self):
 
         match_obj = game_models.SBBGame.objects.create(uuid=uuid4())
