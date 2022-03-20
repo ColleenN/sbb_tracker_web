@@ -151,6 +151,9 @@ class ContextDefaulter:
 
     def __init__(self, source):
         self.source = source
+        self.source_attrs = self.source.split('.')
 
     def __call__(self, serializer_field):
-        return serializer_field.context.get(self.source)
+        value = fields.get_attribute(
+            serializer_field.context, self.source_attrs)
+        return value
