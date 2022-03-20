@@ -1,7 +1,12 @@
-from datetime import datetime
+from io import BytesIO
+import json
 import requests
+import tarfile
 
 from django.core.management.base import BaseCommand
+
+from apps.game_data.serializers.game import GameTarSerializer
+from apps.game_data.models.game import SBBGame
 
 
 class Command(BaseCommand):
@@ -23,6 +28,17 @@ class Command(BaseCommand):
         )
 
         if response.status_code == 200:
-            with open(file_name, 'wb') as f:
-                f.write(response.raw.read())
 
+            # TODO Check for standard AWS error message XML
+            file_stream = BytesIO(response.raw.read())
+            with tarfile.open(mode='r:gz', fileobj=file_stream) as tarball:
+                for tarblock in tarball.getmembers():
+                    as_file = tarball.extractfile(tarblock)
+                    data = json.load(as_file)
+                    serializer = GameTarSerializer(data=data)
+                    if serializer.is_valid():
+                        serializer.save()
+                    else:
+                        # TODO set up some real logging
+                        print(tarblock.name)
+                        print(serializer.errors)
