@@ -19,10 +19,26 @@ class GameTarSerializer(JSONDashConvertMixin, serializers.ModelSerializer):
     placement = serializers.IntegerField(min_value=1, max_value=8)
     player_id = serializers.CharField()
 
+    def update(self, instance, validated_data):
+        """
+        Update an existing SBBGame.
+        Will usually be a JSON from a different player's perspective.
+        """
+        validated_data.pop('players')
+        placement = validated_data.pop('placement')
+        main_player_id = validated_data.pop('player_id')
+        participant_objs = instance.sbbgameparticipant_set.all()
+
+        for participant in participant_objs:
+            if participant.player.account_id == main_player_id:
+                participant.placement = placement
+                participant.save()
+
+        return instance
+
     def create(self, validated_data):
-
+        """Create a whole new SBBGame from scratch."""
         participants = validated_data.pop('players')
-
         placement = validated_data.pop('placement')
         main_player_id = validated_data.pop('player_id')
 

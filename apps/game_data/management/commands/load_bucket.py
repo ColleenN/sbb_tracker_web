@@ -35,7 +35,15 @@ class Command(BaseCommand):
                 for tarblock in tarball.getmembers():
                     as_file = tarball.extractfile(tarblock)
                     data = json.load(as_file)
+
                     serializer = GameTarSerializer(data=data)
+
+                    uuid = tarblock.name.split('/')[1][:-5]
+                    in_db = SBBGame.objects.filter(uuid=uuid)
+                    if in_db.exists():
+                        serializer.instance = in_db.first()
+                        serializer.partial = True
+
                     if serializer.is_valid():
                         serializer.save()
                     else:
