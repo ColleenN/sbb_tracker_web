@@ -1,4 +1,4 @@
-from django.core.validators import MinValueValidator
+from django.core.validators import MaxLengthValidator, MinValueValidator
 from django.db import models
 
 from apps.game_data.models import meta as metadata
@@ -54,3 +54,34 @@ class SBBGameTurn(models.Model):
             models.CheckConstraint(
                 name='exp_cap', check=models.Q(exp__lt=3))
         ]
+
+
+class SBBGameCharacter(models.Model):
+    """
+    A character as it exists on a player's board/hand
+    as they finish their shopping for the turn.
+    """
+
+    base_character = models.ForeignKey(
+        metadata.SBBCharacter, on_delete=models.DO_NOTHING)
+    game_turn = models.ForeignKey(SBBGameTurn, on_delete=models.DO_NOTHING)
+    attack = models.IntegerField()
+    health = models.IntegerField()
+    upgraded = models.BooleanField()
+    position = models.IntegerField(
+        validators=(
+            MinValueValidator(1),
+            MaxLengthValidator(7)
+        )
+    )
+
+
+class SBBGameTreasure(models.Model):
+    """
+    A character as it exists on a player's board/hand
+    as they finish their shopping for the turn.
+    """
+
+    base_treasure = models.ForeignKey(
+        metadata.SBBTreasure, on_delete=models.DO_NOTHING)
+    game_turn = models.ForeignKey(SBBGameTurn, on_delete=models.DO_NOTHING)
