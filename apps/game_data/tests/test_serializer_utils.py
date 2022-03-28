@@ -2,6 +2,7 @@ from django.test import TestCase
 from rest_framework import serializers
 
 from apps.game_data.serializers.utils import (
+    ContextDefaulter,
     IDKeyListField,
     IDKeyListSerializer,
     JSONDashConvertMixin
@@ -91,6 +92,51 @@ class TestIDKeyChildSerializer(TestCase):
 class SampleIDKeyListFieldSerializer(serializers.Serializer):
 
     sample_field = IDKeyListField()
+
+
+class TestContextDefaulter(TestCase):
+
+    def test_basic_lookup(self):
+
+        class SimpleSerializer(serializers.Serializer):
+            sample_field_1 = serializers.CharField(
+                default=ContextDefaulter(source='key_1'))
+            sample_field_2 = serializers.CharField()
+
+        serializer = SimpleSerializer(
+            data={'sample_field_2': 'ValueB'},
+            context={'key_1': 'ValueA'}
+        )
+        self.assertTrue(serializer.is_valid())
+        self.assertEqual(
+            serializer.data,
+            {'sample_field_1': 'ValueA', 'sample_field_2': 'ValueB'}
+        )
+
+    def test_nested_lookups(self):
+
+        class SimpleSerializer(serializers.Serializer):
+            sample_field_1 = serializers.CharField(
+                default=ContextDefaulter(
+                    source='key_1.sample_field_2.last_key'))
+            sample_field_2 = serializers.CharField(
+                default=ContextDefaulter(source='key_2.sample_field_1'))
+
+        obj_1 = SampleObject('Bad Value', {'last_key': 'final_value_1'})
+        obj_2 = SampleObject('final_value_2', 'Bad Value')
+
+        serializer = SimpleSerializer(
+            context={'key_1': obj_1, 'key_2': lambda: obj_2},
+            data={}
+        )
+        self.assertTrue(serializer.is_valid())
+        self.assertEqual(
+            serializer.data,
+            {
+                'sample_field_1': 'final_value_1',
+                'sample_field_2': 'final_value_2'
+            }
+        )
 
 
 class TestIDKeyListField(TestCase):
