@@ -1,4 +1,4 @@
-from django.core.validators import MaxLengthValidator, MinValueValidator
+from django.core.validators import MaxValueValidator, MinValueValidator
 from django.db import models
 
 from apps.game_data.models import meta as metadata
@@ -46,6 +46,17 @@ class SBBGameTurn(models.Model):
     hp = models.IntegerField(null=True)
     level = models.IntegerField(null=True)
     exp = models.IntegerField(null=True)
+    treasures = models.ManyToManyField(metadata.SBBTreasure)
+    characters = models.ManyToManyField(
+        metadata.SBBCharacter,
+        through='SBBGameCharacter',
+        through_fields=('game_turn', 'base_character')
+    )
+    spells = models.ManyToManyField(
+        metadata.SBBSpell,
+        through='SBBGameSpell',
+        through_fields=('game_turn', 'base_spell')
+    )
 
     class Meta:
         constraints = [
@@ -67,21 +78,18 @@ class SBBGameCharacter(models.Model):
     game_turn = models.ForeignKey(SBBGameTurn, on_delete=models.DO_NOTHING)
     attack = models.IntegerField()
     health = models.IntegerField()
-    upgraded = models.BooleanField()
+    golden = models.BooleanField()
     position = models.IntegerField(
         validators=(
             MinValueValidator(1),
-            MaxLengthValidator(7)
+            MaxValueValidator(7)
         )
     )
 
 
-class SBBGameTreasure(models.Model):
-    """
-    A character as it exists on a player's board/hand
-    as they finish their shopping for the turn.
-    """
+class SBBGameSpell(models.Model):
 
-    base_treasure = models.ForeignKey(
-        metadata.SBBTreasure, on_delete=models.DO_NOTHING)
+    base_spell = models.ForeignKey(
+        metadata.SBBSpell, on_delete=models.DO_NOTHING)
     game_turn = models.ForeignKey(SBBGameTurn, on_delete=models.DO_NOTHING)
+    order = models.IntegerField()

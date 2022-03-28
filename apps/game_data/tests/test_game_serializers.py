@@ -11,15 +11,25 @@ from apps.game_data.models import (
 from apps.game_data.serializers.game import (
     GameTarSerializer
 )
+from apps.game_data.serializers.meta import (
+    GamePieceSerializer
+)
 from apps.game_data.serializers.participant_data import (
     PlayerGameRecordSerializer
 )
+from apps.game_data.serializers.combat_data import CombatSerializer
 
 
 class TestSerializers(TestCase):
 
     def setUp(self) -> None:
         self.samples_dir = 'apps/game_data/tests/json_samples'
+
+        json_data = json.load(
+            open(os.path.join(self.samples_dir, 'meta_sample.json'), 'r'))
+        serializer = GamePieceSerializer(data=json_data, many=True)
+        self.assertTrue(serializer.is_valid())
+        serializer.save()
 
     def test_main_serializer(self):
 
@@ -76,3 +86,56 @@ class TestSerializers(TestCase):
         self.assertEqual(last_turn.level, 6)
         self.assertEqual(last_turn.exp, 0)
         self.assertEqual(last_turn.hp, -2)
+
+    def test_singleton_combat_serializer(self):
+        # Set up all the stuff that would be passed/spec'ed by context
+        match_obj = game_models.SBBGame.objects.create(uuid=uuid4())
+        player_1 = meta_models.SBBPlayer.objects.create(
+            account_id="61F59D54CA111EB2")
+        participant_1 = game_models.SBBGameParticipant.objects.create(
+            match=match_obj, player=player_1)
+        turn_obj_1 = game_models.SBBGameTurn(
+            turn_num=12, participant=participant_1)
+
+        json_data = json.load(
+            open(
+                os.path.join(self.samples_dir, 'singleton_combat_sample.json'),
+                'r'
+            )
+        )
+        serializer = CombatSerializer(
+            data=json_data, context={'match': match_obj, 'round': 12})
+        print(serializer.is_valid())
+        print(serializer.errors)
+        self.fail()
+
+    def test_combat_serializer(self):
+
+        # Set up all the stuff that would be passed/spec'ed by context
+        match_obj = game_models.SBBGame.objects.create(uuid=uuid4())
+        player_1 = meta_models.SBBPlayer.objects.create(
+            account_id="61F59D54CA111EB2")
+        participant_1 = game_models.SBBGameParticipant.objects.create(
+            match=match_obj, player=player_1)
+        turn_obj_1 = game_models.SBBGameTurn(
+            turn_num=12, participant=participant_1)
+        player_2 = meta_models.SBBPlayer.objects.create(
+            account_id="F52948771128A2F6")
+        participant_2 = game_models.SBBGameParticipant.objects.create(
+            match=match_obj, player=player_2)
+        turn_obj_2 = game_models.SBBGameTurn(
+            turn_num=12, participant=participant_2)
+
+        json_data = json.load(
+            open(
+                os.path.join(self.samples_dir, 'combat_sample.json'),
+                'r'
+            )
+        )
+        serializer = CombatSerializer(
+            data=json_data, context={'match': match_obj}, many=True)
+
+        print(serializer.is_valid())
+        print(serializer.errors)
+        print(serializer.data)
+        self.fail()

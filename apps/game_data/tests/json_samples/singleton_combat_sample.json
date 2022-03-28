@@ -1,0 +1,98 @@
+{
+  "characters": [
+    {
+      "id": "103",
+      "attack": 4,
+      "health": 9,
+      "golden": true,
+      "cost": 2,
+      "position": 5,
+      "tribes": [
+        "evil",
+        "mage"
+      ]
+    },
+    {
+      "id": "167",
+      "attack": 13,
+      "health": 5,
+      "golden": false,
+      "cost": 3,
+      "position": 1,
+      "tribes": [
+        "good",
+        "princess"
+      ]
+    },
+    {
+      "id": "118",
+      "attack": 7,
+      "health": 7,
+      "golden": false,
+      "cost": 2,
+      "position": 7,
+      "tribes": [
+        "good",
+        "monster"
+      ]
+    },
+    {
+      "id": "191",
+      "attack": 12,
+      "health": 5,
+      "golden": false,
+      "cost": 3,
+      "position": 2,
+      "tribes": [
+        "good",
+        "princess",
+        "monster"
+      ]
+    },
+    {
+      "id": "106",
+      "attack": 4,
+      "health": 3,
+      "golden": false,
+      "cost": 2,
+      "position": 4,
+      "tribes": [
+        "evil",
+        "animal"
+      ]
+    },
+    {
+      "id": "106",
+      "attack": 4,
+      "health": 3,
+      "golden": false,
+      "cost": 2,
+      "position": 3,
+      "tribes": [
+        "evil",
+        "animal"
+      ]
+    },
+    {
+      "id": "169",
+      "attack": 4,
+      "health": 8,
+      "golden": false,
+      "cost": 3,
+      "position": 6,
+      "tribes": [
+        "good",
+        "animal"
+      ]
+    }
+  ],
+  "treasures": [
+    "153"
+  ],
+  "hero": "76",
+  "spells": [
+    "213"
+  ],
+  "level": 0,
+  "hand": []
+}
