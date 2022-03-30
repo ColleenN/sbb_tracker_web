@@ -41,8 +41,8 @@ class TestSerializers(TestCase):
 
         self.assertTrue(serializer.is_valid())
         objs = serializer.save()
-        self.assertEqual(len(objs), 260)
-        self.assertEqual(SBBCharacter.objects.all().count(), 92)
+        self.assertEqual(len(objs), 262)
+        self.assertEqual(SBBCharacter.objects.all().count(), 95)
         self.assertEqual(SBBHero.objects.all().count(), 40)
         self.assertEqual(SBBSpell.objects.all().count(), 53)
-        self.assertEqual(SBBTreasure.objects.all().count(), 75)
+        self.assertEqual(SBBTreasure.objects.all().count(), 74)
