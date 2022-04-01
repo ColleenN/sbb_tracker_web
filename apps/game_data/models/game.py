@@ -20,8 +20,8 @@ class SBBGameParticipant(models.Model):
     Refers to a player 'in-lobby' for a specified game.
     """
 
-    match = models.ForeignKey(SBBGame, on_delete=models.DO_NOTHING)
-    player = models.ForeignKey(metadata.SBBPlayer, on_delete=models.DO_NOTHING)
+    match = models.ForeignKey(SBBGame, on_delete=models.CASCADE)
+    player = models.ForeignKey(metadata.SBBPlayer, on_delete=models.PROTECT)
     placement = models.IntegerField(null=True)
 
     class Meta:
@@ -40,9 +40,9 @@ class SBBGameTurn(models.Model):
 
     turn_num = models.IntegerField(validators=(MinValueValidator(1),))
     participant = models.ForeignKey(
-        SBBGameParticipant, on_delete=models.DO_NOTHING)
+        SBBGameParticipant, on_delete=models.CASCADE)
     hero = models.ForeignKey(
-        metadata.SBBHero, null=True, on_delete=models.DO_NOTHING)
+        metadata.SBBHero, null=True, on_delete=models.PROTECT)
     hp = models.IntegerField(null=True)
     level = models.IntegerField(null=True)
     exp = models.IntegerField(null=True)
@@ -74,8 +74,8 @@ class SBBGameCharacter(models.Model):
     """
 
     base_character = models.ForeignKey(
-        metadata.SBBCharacter, on_delete=models.DO_NOTHING)
-    game_turn = models.ForeignKey(SBBGameTurn, on_delete=models.DO_NOTHING)
+        metadata.SBBCharacter, on_delete=models.PROTECT)
+    game_turn = models.ForeignKey(SBBGameTurn, on_delete=models.PROTECT)
     attack = models.IntegerField()
     health = models.IntegerField()
     golden = models.BooleanField()
@@ -90,6 +90,6 @@ class SBBGameCharacter(models.Model):
 class SBBGameSpell(models.Model):
 
     base_spell = models.ForeignKey(
-        metadata.SBBSpell, on_delete=models.DO_NOTHING)
-    game_turn = models.ForeignKey(SBBGameTurn, on_delete=models.DO_NOTHING)
+        metadata.SBBSpell, on_delete=models.PROTECT)
+    game_turn = models.ForeignKey(SBBGameTurn, on_delete=models.CASCADE)
     order = models.IntegerField()
