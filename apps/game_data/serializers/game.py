@@ -19,6 +19,17 @@ class GameTarSerializer(JSONDashConvertMixin, serializers.ModelSerializer):
     placement = serializers.IntegerField(min_value=1, max_value=8)
     player_id = serializers.CharField()
 
+    def save(self):
+
+        if self.instance is None:
+            existing_games = game_models.SBBGame.objects.filter(
+                match_id=self.validated_data['match_id'])
+
+            if existing_games.exists():
+                self.instance = existing_games.get()
+
+        return super().save()
+
     def update(self, instance, validated_data):
         """
         Update an existing SBBGame.
