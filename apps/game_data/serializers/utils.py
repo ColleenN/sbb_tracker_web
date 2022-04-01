@@ -157,3 +157,11 @@ class ContextDefaulter:
         value = fields.get_attribute(
             serializer_field.context, self.source_attrs)
         return value
+
+
+class ParentInstanceDefaulter:
+    requires_context = True
+
+    def __call__(self, serializer_field):
+        print(serializer_field.parent)
+        return serializer_field.parent.instance
