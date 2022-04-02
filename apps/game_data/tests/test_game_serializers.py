@@ -3,6 +3,7 @@ import json
 import os
 
 from django.test import TestCase
+from rest_framework.serializers import Serializer
 
 from apps.game_data.models import (
     game as game_models,
@@ -91,11 +92,15 @@ class TestSerializers(TestCase):
         # Set up all the stuff that would be passed/spec'ed by context
         match_obj = game_models.SBBGame.objects.create(uuid=uuid4())
         player_1 = meta_models.SBBPlayer.objects.create(
-            account_id="61F59D54CA111EB2")
+            account_id="B2C790C4C7DF341D")
         participant_1 = game_models.SBBGameParticipant.objects.create(
             match=match_obj, player=player_1)
-        turn_obj_1 = game_models.SBBGameTurn(
+        turn_obj_1 = game_models.SBBGameTurn.objects.create(
             turn_num=12, participant=participant_1)
+
+        fake_game_serialier = Serializer(instance=match_obj)
+        fake_combat_list_serializer = Serializer(many=True)
+        fake_combat_list_serializer.parent = fake_game_serialier
 
         json_data = json.load(
             open(
@@ -104,12 +109,23 @@ class TestSerializers(TestCase):
             )
         )
         serializer = CombatSerializer(
-            data=json_data, context={'match': match_obj, 'round': 12})
-        print(serializer.is_valid())
-        print(serializer.errors)
-        self.fail()
+            data=json_data,
+            context={'player_id': player_1.account_id, 'round': 12}
+        )
+        serializer.parent = fake_combat_list_serializer.child
+        self.assertTrue(serializer.is_valid())
+        self.assertEqual(len(serializer.validated_data['characters']), 7)
+        other_turn_obj = serializer.save()
 
-    def test_combat_serializer(self):
+        self.assertEqual(game_models.SBBGameCharacter.objects.count(), 7)
+        my_spell = game_models.SBBGameSpell.objects.get()
+        self.assertEqual(my_spell.base_spell.template_id, 275)
+        self.assertEqual(
+            list(other_turn_obj.treasures.values_list('template_id', flat=True)),
+            [133, 148, 211]
+        )
+
+    def test_combat_match_serializer(self):
 
         # Set up all the stuff that would be passed/spec'ed by context
         match_obj = game_models.SBBGame.objects.create(uuid=uuid4())
