@@ -96,39 +96,36 @@ class CombatMatchSerializer(serializers.Serializer):
     def to_internal_value(self, data):
         main_player = self.parent.initial_data['player-id']
         data['main_player'] = data.pop(main_player)
-        self.fields.get('main_player').context['player_id'] = main_player
-        self.fields.get('main_player').context['round'] = data['round']
+        self.context['main_player_id'] = main_player
+        self.context['round'] = data['round']
 
         known_keys = {'round', 'sim-results', 'main_player'}
         leftover_keys = set(data.keys()) - known_keys
         op_id = leftover_keys.pop()
         data['opponent'] = data.pop(op_id)
-        self.fields.get('opponent').context['player_id'] = op_id
-        self.fields.get('opponent').context['round'] = data['round']
+        self.context['opponent_id'] = op_id
 
         return super().to_internal_value(data)
 
     def create(self, validated_data):
         game = self.parent.instance
 
-        main_p_field = self.fields.get('main_player')
-        acct_id = main_p_field.context['player_id']
+        acct_id = self.context['main_player_id']
         player_obj, _ = meta_models.SBBPlayer.objects.get_or_create(
             account_id=acct_id)
         participant, _ = game_models.SBBGameParticipant.objects.get_or_create(
             match=game, player_id=player_obj)
         main_p_data = validated_data.get('main_player')
         main_p_data['participant'] = participant
-        main_p_turn = main_p_field.create(main_p_data)
+        main_p_turn = self.fields.get('main_player').create(main_p_data)
 
-        op_field = self.fields.get('opponent')
-        acct_id = op_field.context['player_id']
+        acct_id = self.context['opponent_id']
         player_obj, _ = meta_models.SBBPlayer.objects.get_or_create(
             account_id=acct_id)
         participant, _ = game_models.SBBGameParticipant.objects.get_or_create(
             match=game, player_id=player_obj)
         op_data = validated_data.get('opponent')
         op_data['participant'] = participant
-        op_turn = op_field.create(validated_data.get('opponent'))
+        op_turn = self.fields.get('opponent').create(op_data)
 
         return [main_p_turn, op_turn]

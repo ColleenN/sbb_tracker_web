@@ -7,6 +7,7 @@ from apps.game_data.models import game as game_models
 from apps.game_data.serializers.participant_data import (
     PlayerGameRecordSerializer
 )
+from apps.game_data.serializers.combat_data import CombatMatchSerializer
 from apps.game_data.serializers.utils import JSONDashConvertMixin
 
 
@@ -18,6 +19,7 @@ class GameTarSerializer(JSONDashConvertMixin, serializers.ModelSerializer):
     players = PlayerGameRecordSerializer(many=True)
     placement = serializers.IntegerField(min_value=1, max_value=8)
     player_id = serializers.CharField()
+    combat_data = CombatMatchSerializer(many=True)
 
     def save(self):
 

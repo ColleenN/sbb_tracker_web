@@ -49,11 +49,11 @@ class TestSerializers(TestCase):
 
         self.assertEqual(meta_models.SBBPlayer.objects.all().count(), 8)
         main_player = meta_models.SBBPlayer.objects.get(
-            account_id="61F59D54CA111EB2")
+            account_id="B2C790C4C7DF341D")
 
         participant_obj = main_player.sbbgameparticipant_set
         self.assertEqual(participant_obj.all().count(), 1)
-        self.assertEqual(participant_obj.first().placement, 5)
+        self.assertEqual(participant_obj.first().placement, 7)
 
     def test_player_serializer(self):
 
@@ -132,14 +132,14 @@ class TestSerializers(TestCase):
             account_id="B2C790C4C7DF341D")
         participant_1 = game_models.SBBGameParticipant.objects.create(
             match=match_obj, player=player_1)
-        turn_obj_1 = game_models.SBBGameTurn(
-            turn_num=12, participant=participant_1)
+        turn_obj_1 = game_models.SBBGameTurn.objects.create(
+            turn_num=8, participant=participant_1)
         player_2 = meta_models.SBBPlayer.objects.create(
             account_id="5E2F2E83C4BC4A8E")
         participant_2 = game_models.SBBGameParticipant.objects.create(
             match=match_obj, player=player_2)
-        turn_obj_2 = game_models.SBBGameTurn(
-            turn_num=12, participant=participant_2)
+        turn_obj_2 = game_models.SBBGameTurn.objects.create(
+            turn_num=8, participant=participant_2)
 
         fake_game_serializer = Serializer(
             data={'player-id': 'B2C790C4C7DF341D'}, instance=match_obj)
@@ -155,5 +155,4 @@ class TestSerializers(TestCase):
 
         self.assertTrue(serializer.is_valid())
         result = serializer.save()
-        print(result)
-        self.fail()
+        self.assertEqual(result, [turn_obj_1, turn_obj_2])
