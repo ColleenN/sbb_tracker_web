@@ -11,6 +11,11 @@ class SBBGame(models.Model):
     """
 
     uuid = models.UUIDField(unique=True)
+    player_list = models.ManyToManyField(
+        metadata.SBBPlayer,
+        through='SBBGameParticipant',
+        through_fields=('match', 'player')
+    )
 
     # Ask isik - can we get client patch stamp?
 
