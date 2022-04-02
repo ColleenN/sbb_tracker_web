@@ -18,7 +18,10 @@ from apps.game_data.serializers.meta import (
 from apps.game_data.serializers.participant_data import (
     PlayerGameRecordSerializer
 )
-from apps.game_data.serializers.combat_data import CombatSerializer
+from apps.game_data.serializers.combat_data import (
+    CombatSerializer,
+    CombatMatchSerializer
+)
 
 
 class TestSerializers(TestCase):
@@ -98,10 +101,6 @@ class TestSerializers(TestCase):
         turn_obj_1 = game_models.SBBGameTurn.objects.create(
             turn_num=12, participant=participant_1)
 
-        fake_game_serialier = Serializer(instance=match_obj)
-        fake_combat_list_serializer = Serializer(many=True)
-        fake_combat_list_serializer.parent = fake_game_serialier
-
         json_data = json.load(
             open(
                 os.path.join(self.samples_dir, 'singleton_combat_sample.json'),
@@ -110,13 +109,13 @@ class TestSerializers(TestCase):
         )
         serializer = CombatSerializer(
             data=json_data,
-            context={'player_id': player_1.account_id, 'round': 12}
+            context={'participant': participant_1, 'round': 12}
         )
-        serializer.parent = fake_combat_list_serializer.child
         self.assertTrue(serializer.is_valid())
         self.assertEqual(len(serializer.validated_data['characters']), 7)
         other_turn_obj = serializer.save()
 
+        self.assertEqual(other_turn_obj, turn_obj_1)
         self.assertEqual(game_models.SBBGameCharacter.objects.count(), 7)
         my_spell = game_models.SBBGameSpell.objects.get()
         self.assertEqual(my_spell.base_spell.template_id, 275)
@@ -130,17 +129,20 @@ class TestSerializers(TestCase):
         # Set up all the stuff that would be passed/spec'ed by context
         match_obj = game_models.SBBGame.objects.create(uuid=uuid4())
         player_1 = meta_models.SBBPlayer.objects.create(
-            account_id="61F59D54CA111EB2")
+            account_id="B2C790C4C7DF341D")
         participant_1 = game_models.SBBGameParticipant.objects.create(
             match=match_obj, player=player_1)
         turn_obj_1 = game_models.SBBGameTurn(
             turn_num=12, participant=participant_1)
         player_2 = meta_models.SBBPlayer.objects.create(
-            account_id="F52948771128A2F6")
+            account_id="5E2F2E83C4BC4A8E")
         participant_2 = game_models.SBBGameParticipant.objects.create(
             match=match_obj, player=player_2)
         turn_obj_2 = game_models.SBBGameTurn(
             turn_num=12, participant=participant_2)
+
+        fake_game_serializer = Serializer(
+            data={'player-id': 'B2C790C4C7DF341D'}, instance=match_obj)
 
         json_data = json.load(
             open(
@@ -148,10 +150,10 @@ class TestSerializers(TestCase):
                 'r'
             )
         )
-        serializer = CombatSerializer(
-            data=json_data, context={'match': match_obj}, many=True)
+        serializer = CombatMatchSerializer(data=json_data)
+        serializer.parent = fake_game_serializer
 
-        print(serializer.is_valid())
-        print(serializer.errors)
-        print(serializer.data)
+        self.assertTrue(serializer.is_valid())
+        result = serializer.save()
+        print(result)
         self.fail()

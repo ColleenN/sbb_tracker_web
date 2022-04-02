@@ -1,143 +1,108 @@
 {
-  "61F59D54CA111EB2": {
+  "B2C790C4C7DF341D": {
     "characters": [
       {
-        "id": "103",
-        "attack": 4,
-        "health": 9,
-        "golden": true,
-        "cost": 2,
-        "position": 5,
+        "id": "237",
+        "attack": 9,
+        "health": 3,
+        "golden": false,
+        "cost": 4,
+        "position": 1,
         "tribes": [
           "evil",
+          "monster"
+        ]
+      },
+      {
+        "id": "100",
+        "attack": 11,
+        "health": 11,
+        "golden": true,
+        "cost": 2,
+        "position": 7,
+        "tribes": [
+          "animal",
           "mage"
         ]
       },
       {
-        "id": "167",
-        "attack": 13,
-        "health": 5,
-        "golden": false,
+        "id": "158",
+        "attack": 3,
+        "health": 3,
+        "golden": true,
         "cost": 3,
-        "position": 1,
+        "position": 4,
         "tribes": [
           "good",
           "princess"
         ]
       },
       {
-        "id": "118",
-        "attack": 7,
-        "health": 7,
-        "golden": false,
+        "id": "90",
+        "attack": 0,
+        "health": 6,
+        "golden": true,
         "cost": 2,
-        "position": 7,
-        "tribes": [
-          "good",
-          "monster"
-        ]
-      },
-      {
-        "id": "191",
-        "attack": 12,
-        "health": 5,
-        "golden": false,
-        "cost": 3,
-        "position": 2,
-        "tribes": [
-          "good",
-          "princess",
-          "monster"
-        ]
-      },
-      {
-        "id": "106",
-        "attack": 4,
-        "health": 3,
-        "golden": false,
-        "cost": 2,
-        "position": 4,
+        "position": 5,
         "tribes": [
           "evil",
-          "animal"
-        ]
-      },
-      {
-        "id": "106",
-        "attack": 4,
-        "health": 3,
-        "golden": false,
-        "cost": 2,
-        "position": 3,
-        "tribes": [
-          "evil",
-          "animal"
+          "mage"
         ]
       },
       {
         "id": "169",
-        "attack": 4,
-        "health": 8,
+        "attack": 5,
+        "health": 3,
         "golden": false,
         "cost": 3,
         "position": 6,
         "tribes": [
-          "good",
-          "animal"
-        ]
-      }
-    ],
-    "treasures": [
-      "153"
-    ],
-    "hero": "76",
-    "spells": [
-      "213"
-    ],
-    "level": 0,
-    "hand": []
-  },
-  "94EFFF42C8A8A56E": {
-    "characters": [
-      {
-        "id": "182",
-        "attack": 7,
-        "health": 5,
-        "golden": true,
-        "cost": 3,
-        "position": 4,
-        "tribes": [
-          "dwarf"
-        ]
-      },
-      {
-        "id": "167",
-        "attack": 7,
-        "health": 6,
-        "golden": false,
-        "cost": 3,
-        "position": 1,
-        "tribes": [
-          "good",
-          "princess"
-        ]
-      },
-      {
-        "id": "236",
-        "attack": 4,
-        "health": 4,
-        "golden": false,
-        "cost": 4,
-        "position": 6,
-        "tribes": [
-          "good",
+          "evil",
           "mage"
         ]
       },
       {
-        "id": "191",
-        "attack": 5,
-        "health": 10,
+        "id": "93",
+        "attack": 7,
+        "health": 1,
+        "golden": false,
+        "cost": 2,
+        "position": 2,
+        "tribes": [
+          "evil",
+          "animal"
+        ]
+      },
+      {
+        "id": "231",
+        "attack": 10,
+        "health": 1,
+        "golden": false,
+        "cost": 4,
+        "position": 3,
+        "tribes": [
+          "dragon"
+        ]
+      }
+    ],
+    "treasures": [
+      "133",
+      "211",
+      "148"
+    ],
+    "hero": "71",
+    "spells": [
+      "275"
+    ],
+    "level": 0,
+    "hand": []
+  },
+  "5E2F2E83C4BC4A8E": {
+    "characters": [
+      {
+        "id": "177",
+        "attack": 11,
+        "health": 2,
         "golden": false,
         "cost": 3,
         "position": 2,
@@ -148,33 +113,9 @@
         ]
       },
       {
-        "id": "179",
-        "attack": 2,
-        "health": 3,
-        "golden": false,
-        "cost": 3,
-        "position": 5,
-        "tribes": [
-          "good",
-          "mage"
-        ]
-      },
-      {
-        "id": "234",
-        "attack": 7,
-        "health": 7,
-        "golden": false,
-        "cost": 4,
-        "position": 7,
-        "tribes": [
-          "good",
-          "princess"
-        ]
-      },
-      {
         "id": "1",
-        "attack": 10,
-        "health": 15,
+        "attack": 17,
+        "health": 13,
         "golden": true,
         "cost": 2,
         "position": 3,
@@ -183,13 +124,85 @@
           "animal",
           "prince"
         ]
+      },
+      {
+        "id": "223",
+        "attack": 6,
+        "health": 3,
+        "golden": false,
+        "cost": 4,
+        "position": 5,
+        "tribes": [
+          "evil",
+          "mage"
+        ]
+      },
+      {
+        "id": "178",
+        "attack": 17,
+        "health": 7,
+        "golden": true,
+        "cost": 3,
+        "position": 1,
+        "tribes": [
+          "good",
+          "princess",
+          "monster"
+        ]
+      },
+      {
+        "id": "175",
+        "attack": 3,
+        "health": 3,
+        "golden": false,
+        "cost": 3,
+        "position": 7,
+        "tribes": [
+          "evil",
+          "treant"
+        ]
+      },
+      {
+        "id": "234",
+        "attack": 14,
+        "health": 7,
+        "golden": true,
+        "cost": 4,
+        "position": 6,
+        "tribes": [
+          "good",
+          "mage"
+        ]
+      },
+      {
+        "id": "219",
+        "attack": 10,
+        "health": 7,
+        "golden": false,
+        "cost": 4,
+        "position": 4,
+        "tribes": [
+          "good",
+          "princess"
+        ]
       }
     ],
-    "treasures": [],
-    "hero": "80",
+    "treasures": [
+      "285",
+      "279",
+      "283"
+    ],
+    "hero": "61",
     "spells": [],
     "level": 0,
     "hand": []
   },
-  "round": 7
+  "round": 8,
+  "sim-results": {
+    "win-percent": 69.27,
+    "tie-percent": 3.6,
+    "loss-percent": 27.13,
+    "win-dmg": 9.8,
+    "loss-dmg": 7.1
+  }
 }
