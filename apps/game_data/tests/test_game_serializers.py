@@ -44,7 +44,7 @@ class TestSerializers(TestCase):
         obj = serializer.save()
         self.assertEqual(
             str(obj.uuid),
-            'b822d294-38ce-4696-ab38-d286f2e91b1e'
+            '03c39420-bf7d-4cd0-93cc-bee4b56d4fcf'
         )
 
         self.assertEqual(meta_models.SBBPlayer.objects.all().count(), 8)

@@ -19,52 +19,51 @@ class GameTarSerializer(JSONDashConvertMixin, serializers.ModelSerializer):
     players = PlayerGameRecordSerializer(many=True)
     placement = serializers.IntegerField(min_value=1, max_value=8)
     player_id = serializers.CharField()
-    combat_data = CombatMatchSerializer(many=True)
-
-    def save(self):
-
-        if self.instance is None:
-            existing_games = game_models.SBBGame.objects.filter(
-                match_id=self.validated_data['match_id'])
-
-            if existing_games.exists():
-                self.instance = existing_games.get()
-
-        return super().save()
+    #combat_data = CombatMatchSerializer(many=True)
 
     def update(self, instance, validated_data):
         """
         Update an existing SBBGame.
         Will usually be a JSON from a different player's perspective.
         """
-        validated_data.pop('players')
-        placement = validated_data.pop('placement')
-        main_player_id = validated_data.pop('player_id')
-        participant_objs = instance.sbbgameparticipant_set.all()
-
-        for participant in participant_objs:
-            if participant.player.account_id == main_player_id:
-                participant.placement = placement
-                participant.save()
-
-        return instance
-
-    def create(self, validated_data):
-        """Create a whole new SBBGame from scratch."""
         participants = validated_data.pop('players')
         placement = validated_data.pop('placement')
         main_player_id = validated_data.pop('player_id')
 
-        game_obj = super().create(validated_data)
-        self.fields['players'].context['match'] = game_obj
-        participant_objs = self.fields['players'].create(participants)
+        for participant in participants:
+            if participant['player_id'] == main_player_id:
+                participant['placement'] = placement
 
-        for participant in participant_objs:
-            if participant.player.account_id == main_player_id:
-                participant.placement = placement
-                participant.save()
+        self.update_participants(instance, new_participants=participants)
 
-        return game_obj
+        return instance
+
+    def validate_participants(self, value):
+        """Check that we aren't about to end up with 9+ participants."""
+        return value
+
+    def update_participants(self, instance, new_participants):
+
+        existing = instance.sbbgameparticipant_set.values_list(
+            'player__account_id', flat=True)
+        for item in new_participants:
+            if item['player_id'] not in existing:
+                item['match_id'] = instance.pk
+                self.fields.get('players').child.create(item)
+            else:
+                self.fields.get('players').child.update(
+                    instance=game_models.SBBGameParticipant.objects.get(
+                        player__account_id=item['player_id'],
+                        match=instance
+                    )
+                )
+
+    def create(self, validated_data):
+        """Create a whole new SBBGame from scratch."""
+
+        self.instance, _ = game_models.SBBGame.objects.get_or_create(
+            uuid=self.validated_data['uuid'])
+        return self.update(self.instance, validated_data)
 
     class Meta:
         model = game_models.SBBGame

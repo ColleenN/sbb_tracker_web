@@ -48,7 +48,6 @@ class PlayerGameRecordSerializer(
         return turn_obj
 
     def create(self, validated_data):
-        validated_data['match'] = self.context['match']
 
         player_obj, _ = meta_models.SBBPlayer.objects.get_or_create(
             account_id=validated_data['player_id'])
