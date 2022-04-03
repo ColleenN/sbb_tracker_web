@@ -94,7 +94,7 @@ class CombatMatchSerializer(serializers.Serializer):
     opponent = CombatSerializer()
 
     def to_internal_value(self, data):
-        main_player = self.parent.initial_data['player-id']
+        main_player = self.parent.parent.initial_data['player-id']
         data['main_player'] = data.pop(main_player)
         self.context['main_player_id'] = main_player
         self.context['round'] = data['round']
@@ -108,13 +108,13 @@ class CombatMatchSerializer(serializers.Serializer):
         return super().to_internal_value(data)
 
     def create(self, validated_data):
-        game = self.parent.instance
+        game = self.parent.parent.instance
 
         acct_id = self.context['main_player_id']
         player_obj, _ = meta_models.SBBPlayer.objects.get_or_create(
             account_id=acct_id)
         participant, _ = game_models.SBBGameParticipant.objects.get_or_create(
-            match=game, player_id=player_obj)
+            match=game, player=player_obj)
         main_p_data = validated_data.get('main_player')
         main_p_data['participant'] = participant
         main_p_turn = self.fields.get('main_player').create(main_p_data)

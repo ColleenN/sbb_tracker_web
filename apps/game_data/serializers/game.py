@@ -19,7 +19,12 @@ class GameTarSerializer(JSONDashConvertMixin, serializers.ModelSerializer):
     players = PlayerGameRecordSerializer(many=True)
     placement = serializers.IntegerField(min_value=1, max_value=8)
     player_id = serializers.CharField()
-    #combat_data = CombatMatchSerializer(many=True)
+    combat_info = CombatMatchSerializer(many=True)
+
+    def to_internal_value(self, data):
+
+        value = super().to_internal_value(data)
+        return value
 
     def update(self, instance, validated_data):
         """
@@ -38,7 +43,7 @@ class GameTarSerializer(JSONDashConvertMixin, serializers.ModelSerializer):
 
         return instance
 
-    def validate_participants(self, value):
+    def validate_players(self, value):
         """Check that we aren't about to end up with 9+ participants."""
         return value
 
@@ -67,5 +72,5 @@ class GameTarSerializer(JSONDashConvertMixin, serializers.ModelSerializer):
 
     class Meta:
         model = game_models.SBBGame
-        fields = ('match_id', 'players', 'placement', 'player_id')
+        fields = ('match_id', 'players', 'placement', 'player_id', 'combat_info')
         extra_kwargs = {'match_id': {'source': 'uuid'}}

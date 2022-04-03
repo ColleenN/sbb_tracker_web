@@ -3,7 +3,7 @@ import json
 import os
 
 from django.test import TestCase
-from rest_framework.serializers import Serializer
+from rest_framework.serializers import ListSerializer, Serializer
 
 from apps.game_data.models import (
     game as game_models,
@@ -151,7 +151,8 @@ class TestSerializers(TestCase):
             )
         )
         serializer = CombatMatchSerializer(data=json_data)
-        serializer.parent = fake_game_serializer
+        fake_list_serializer = ListSerializer(child=serializer)
+        fake_list_serializer.parent = fake_game_serializer
 
         self.assertTrue(serializer.is_valid())
         result = serializer.save()
