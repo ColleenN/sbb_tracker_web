@@ -31,6 +31,7 @@ class Command(BaseCommand):
 
             # TODO Check for standard AWS error message XML
             file_stream = BytesIO(response.raw.read())
+            counter = 0
             with tarfile.open(mode='r:gz', fileobj=file_stream) as tarball:
                 for tarblock in tarball.getmembers():
                     as_file = tarball.extractfile(tarblock)
@@ -38,15 +39,16 @@ class Command(BaseCommand):
 
                     serializer = GameTarSerializer(data=data)
 
-                    uuid = tarblock.name.split('/')[1][:-5]
-                    in_db = SBBGame.objects.filter(uuid=uuid)
-                    if in_db.exists():
-                        serializer.instance = in_db.first()
-                        serializer.partial = True
-
                     if serializer.is_valid():
-                        serializer.save()
+                        try:
+                            serializer.save()
+                            counter = counter + 1
+                        except Exception as e:
+                            print(tarblock.name)
+                            print(e)
                     else:
                         # TODO set up some real logging
                         print(tarblock.name)
                         print(serializer.errors)
+
+            print(f'{counter} games recorded.')
