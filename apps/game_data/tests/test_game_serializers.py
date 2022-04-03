@@ -40,8 +40,6 @@ class TestSerializers(TestCase):
         json_data = json.load(
             open(os.path.join(self.samples_dir, 'full_sample.json'), 'r'))
         serializer = GameTarSerializer(data=json_data)
-        serializer.is_valid()
-        print(serializer.errors)
         self.assertTrue(serializer.is_valid())
         obj = serializer.save()
         self.assertEqual(
