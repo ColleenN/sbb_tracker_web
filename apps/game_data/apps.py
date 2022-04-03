@@ -5,7 +5,3 @@ class GameDataConfig(AppConfig):
     name = 'apps.game_data'
     module = 'apps.game_data'
     label = 'game_data'
-
-    def ready(self):
-
-        print("I LOADED")

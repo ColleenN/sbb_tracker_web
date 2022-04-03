@@ -29,6 +29,13 @@ class PlayerGameRecordSerializer(
         child=serializers.CharField(max_length=16)
     )
 
+    def validate(self, attrs):
+
+        if not self.parent and 'match' not in attrs:
+            raise serializers.ValidationError(
+                {'match': 'Match required if no parent.'})
+        return attrs
+
     def update_turn(self, instance, turn_num, hp, xp, hero):
         """Update Turn data object associated with participant instance."""
         turn_obj, _ = game_models.SBBGameTurn.objects.get_or_create(
@@ -71,4 +78,5 @@ class PlayerGameRecordSerializer(
 
     class Meta:
         model = game_models.SBBGameParticipant
-        fields = ('player_id', 'healths', 'xps', 'heroes')
+        fields = ('player_id', 'healths', 'xps', 'heroes', 'match')
+        extra_kwargs = {'match': {'required': False}}

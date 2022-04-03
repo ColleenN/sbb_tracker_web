@@ -52,7 +52,8 @@ class CombatSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = game_models.SBBGameTurn
-        fields = ('characters', 'spells', 'treasures', 'round')
+        fields = ('characters', 'spells', 'treasures', 'round', 'participant')
+        extra_kwargs = {'participant': {'required': False}}
 
     def update(self, instance, validated_data):
 
@@ -83,6 +84,13 @@ class CombatSerializer(serializers.ModelSerializer):
         self.instance, _ = game_models.SBBGameTurn.objects.get_or_create(
                 turn_num=round, participant=participant)
         return self.update(self.instance, validated_data)
+
+    def validate(self, attrs):
+
+        if not self.parent and 'participant' not in attrs:
+            raise serializers.ValidationError(
+                {'participant': 'Participant required if no parent.'})
+        return attrs
 
 
 class CombatMatchSerializer(serializers.Serializer):

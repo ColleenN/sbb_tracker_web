@@ -52,11 +52,12 @@ class GameTarSerializer(JSONDashConvertMixin, serializers.ModelSerializer):
         existing = instance.sbbgameparticipant_set.values_list(
             'player__account_id', flat=True)
         for item in new_participants:
+            item['match'] = instance
             if item['player_id'] not in existing:
-                item['match_id'] = instance.pk
                 self.fields.get('players').child.create(item)
             else:
                 self.fields.get('players').child.update(
+                    data=item,
                     instance=game_models.SBBGameParticipant.objects.get(
                         player__account_id=item['player_id'],
                         match=instance

@@ -40,6 +40,8 @@ class TestSerializers(TestCase):
         json_data = json.load(
             open(os.path.join(self.samples_dir, 'full_sample.json'), 'r'))
         serializer = GameTarSerializer(data=json_data)
+        serializer.is_valid()
+        print(serializer.errors)
         self.assertTrue(serializer.is_valid())
         obj = serializer.save()
         self.assertEqual(
@@ -60,8 +62,8 @@ class TestSerializers(TestCase):
         match_obj = game_models.SBBGame.objects.create(uuid=uuid4())
         json_data = json.load(
             open(os.path.join(self.samples_dir, 'player_sample.json'), 'r'))
-        serializer = PlayerGameRecordSerializer(
-            data=json_data, context={'match': match_obj})
+        json_data['match'] = match_obj.pk
+        serializer = PlayerGameRecordSerializer(data=json_data)
 
         self.assertTrue(serializer.is_valid())
         serializer.save()
@@ -72,21 +74,15 @@ class TestSerializers(TestCase):
         participant = game_players.first()
         self.assertEqual(participant.player.account_id, "94EFFF42C8A8A56E")
 
-        heroes = meta_models.SBBHero.objects.all()
-        self.assertEqual(heroes.count(), 1)
-        self.assertEqual(heroes.first().template_id, 80)
-
         turns = game_models.SBBGameTurn.objects.all()
         self.assertEqual(turns.count(), 12)
 
         first_turn = turns.first()
-        self.assertEqual(first_turn.hero, heroes.first())
         self.assertEqual(first_turn.level, 2)
         self.assertEqual(first_turn.exp, 0)
         self.assertEqual(first_turn.hp, 40)
 
         last_turn = turns.last()
-        self.assertEqual(last_turn.hero, heroes.first())
         self.assertEqual(last_turn.level, 6)
         self.assertEqual(last_turn.exp, 0)
         self.assertEqual(last_turn.hp, -2)
@@ -103,10 +99,10 @@ class TestSerializers(TestCase):
 
         json_data = json.load(
             open(
-                os.path.join(self.samples_dir, 'singleton_combat_sample.json'),
-                'r'
-            )
+                os.path.join(self.samples_dir, 'singleton_combat_sample.json'), 'r')
         )
+        json_data['participant'] = participant_1.pk
+
         serializer = CombatSerializer(
             data=json_data,
             context={'participant': participant_1, 'round': 12}
