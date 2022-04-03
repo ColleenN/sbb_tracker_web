@@ -54,6 +54,7 @@ class TestSerializers(TestCase):
         participant_obj = main_player.sbbgameparticipant_set
         self.assertEqual(participant_obj.all().count(), 1)
         self.assertEqual(participant_obj.first().placement, 7)
+        self.assertEqual(game_models.SBBGameCharacter.objects.count(), 108)
 
     def test_player_serializer(self):
 

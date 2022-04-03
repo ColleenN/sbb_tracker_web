@@ -37,6 +37,7 @@ class GameTarSerializer(JSONDashConvertMixin, serializers.ModelSerializer):
                 participant['placement'] = placement
 
         self.update_participants(instance, new_participants=participants)
+        self.fields.get('combat_info').create(validated_data.get('combat_info'))
 
         return instance
 
