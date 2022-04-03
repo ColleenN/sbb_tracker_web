@@ -132,7 +132,7 @@ class IDKeyListField(fields.ListField):
         key_list = sorted(map(lambda x: int(x), data.keys()))
         start = 0 if self.zero_biased else 1
         if not key_list == list(range(start, len(key_list)+start)):
-            raise ValueError('Data keys must form complete list of indices.')
+            raise ValidationError('Data keys must form complete list of indices.')
 
         data_list = [None] * len(key_list)
         for key in data:

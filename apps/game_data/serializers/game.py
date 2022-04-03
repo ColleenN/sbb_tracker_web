@@ -4,6 +4,7 @@ For ingesting the data from daily roll-up tarballs.
 from rest_framework import serializers
 
 from apps.game_data.models import game as game_models
+from apps.game_data.models import meta as meta_models
 from apps.game_data.serializers.participant_data import (
     PlayerGameRecordSerializer
 )
@@ -20,11 +21,7 @@ class GameTarSerializer(JSONDashConvertMixin, serializers.ModelSerializer):
     placement = serializers.IntegerField(min_value=1, max_value=8)
     player_id = serializers.CharField()
     combat_info = CombatMatchSerializer(many=True)
-
-    def to_internal_value(self, data):
-
-        value = super().to_internal_value(data)
-        return value
+    match_id = serializers.UUIDField(source='uuid')
 
     def update(self, instance, validated_data):
         """
@@ -57,7 +54,7 @@ class GameTarSerializer(JSONDashConvertMixin, serializers.ModelSerializer):
                 self.fields.get('players').child.create(item)
             else:
                 self.fields.get('players').child.update(
-                    data=item,
+                    validated_data=item,
                     instance=game_models.SBBGameParticipant.objects.get(
                         player__account_id=item['player_id'],
                         match=instance
@@ -74,4 +71,3 @@ class GameTarSerializer(JSONDashConvertMixin, serializers.ModelSerializer):
     class Meta:
         model = game_models.SBBGame
         fields = ('match_id', 'players', 'placement', 'player_id', 'combat_info')
-        extra_kwargs = {'match_id': {'source': 'uuid'}}
