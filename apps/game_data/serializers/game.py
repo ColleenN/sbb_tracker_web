@@ -22,6 +22,7 @@ class GameTarSerializer(JSONDashConvertMixin, serializers.ModelSerializer):
     player_id = serializers.CharField()
     combat_info = CombatMatchSerializer(many=True)
     match_id = serializers.UUIDField(source='uuid')
+    possibly_mythic = serializers.BooleanField()
 
     def update(self, instance, validated_data):
         """
@@ -35,9 +36,12 @@ class GameTarSerializer(JSONDashConvertMixin, serializers.ModelSerializer):
         for participant in participants:
             if participant['player_id'] == main_player_id:
                 participant['placement'] = placement
+                participant['possibly_mythic'] = validated_data.pop('possibly_mythic')
 
         self.update_participants(instance, new_participants=participants)
-        self.fields.get('combat_info').create(validated_data.get('combat_info'))
+        self.fields.get('combat_info').create(
+            validated_data.get('combat_info')
+        )
 
         return instance
 
@@ -71,4 +75,11 @@ class GameTarSerializer(JSONDashConvertMixin, serializers.ModelSerializer):
 
     class Meta:
         model = game_models.SBBGame
-        fields = ('match_id', 'players', 'placement', 'player_id', 'combat_info')
+        fields = (
+            'match_id',
+            'players',
+            'placement',
+            'player_id',
+            'possibly_mythic',
+            'combat_info'
+        )

@@ -63,6 +63,9 @@ class PlayerGameRecordSerializer(
             instance.match = validated_data['match']
         if 'placement' in validated_data:
             instance.placement = validated_data['placement']
+        if 'possibly_mythic' in validated_data:
+            instance.player.possibly_mythic = validated_data['possibly_mythic']
+            instance.player.save()
 
         instance.save()
 

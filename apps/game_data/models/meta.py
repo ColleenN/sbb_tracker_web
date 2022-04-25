@@ -8,7 +8,8 @@ class SBBPlayer(models.Model):
     """
     Corresponds one player account within SBB game.
     """
-    account_id = models.CharField(unique=True, max_length=32)
+    account_id = models.CharField(unique=True, max_length=128)
+    possibly_mythic = models.BooleanField(null=True, default=None)
 
 
 class SBBGamePiece(models.Model):
