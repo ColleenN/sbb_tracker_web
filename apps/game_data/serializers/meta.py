@@ -31,9 +31,9 @@ class GamePieceSerializer(serializers.Serializer):
 
     def validate_Id(self, value):
         tokens = value.split('_')
-        if not tokens[0] == 'SBB':
-            raise serializers.ValidationError
-        if tokens[1] not in self.mapping.keys():
+        if not tokens[0] in ('SBB', 'GOLDEN'):
+            raise serializers.ValidationError()
+        if not set(tokens).intersection(self.mapping.keys()):
             raise serializers.ValidationError
 
         if self.instance:
@@ -56,7 +56,9 @@ class GamePieceSerializer(serializers.Serializer):
     def get_model(self, slug_value):
         """Return the type of model the slug corresponds to."""
         tokens = slug_value.split('_')
-        return self.mapping[tokens[1]]
+        for token in tokens:
+            if token in self.mapping.keys():
+                return self.mapping[token]
 
     class Meta:
         list_serializer_class = IDKeyListSerializer

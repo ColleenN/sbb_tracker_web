@@ -26,8 +26,8 @@ class GameCharacterSerializer(serializers.ModelSerializer):
         gold_field = self.fields.get('golden')
         primitive_value = gold_field.get_value(data)
         golden_validated = gold_field.run_validation(primitive_value)
-        if golden_validated:
-            data['id'] = str(int(data['id'])-1)
+        #if golden_validated:
+        #    data['id'] = str(int(data['id'])-1)
 
         return super().to_internal_value(data)
 
